@@ -1,41 +1,45 @@
-import java.util.LinkedList;
 
 public class DistincSubsequences {
-    private int numHelper(LinkedList<Character> s, LinkedList<Character> t) {
-        if (t.size() > s.size() || s.size() == 0 || t.size() == 0) {
-            return 0;
-        }
-        if (s.size() == 1 && t.size() == 1) {
-            if (s.poll() == t.poll()) {
-                return 1;
-            }
-            return 0;
-        }
-
-        char ch = t.poll();
-
-        while (s.size() != 0) {
-            char a = s.poll();
-            if (a ==ch) {
-                break;
-            }
-        }
-
-        return numHelper(s, t);
-    }
 
     public int numDistinct(String s, String t) {
-        LinkedList<Character> longString = new LinkedList<>();
-        LinkedList<Character> target = new LinkedList<>();
+        if (t.length() == 1) {
+            int count = 0;
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == t.charAt(0)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        int[][] memory = new int[t.length()][s.length()];
+        for (int j = s.length() - 1; j >= 0; j--) {
+            if (s.charAt(j) == t.charAt(t.length() - 1)) {
+                memory[t.length() - 1][j] = 1;
+            }
+        }
 
+        for (int i = t.length() - 2; i >= 0; i--) {
+            int count = 0;
+            int max = 0;
+            for (int j = s.length() - 2; j >= 0; j--) {
+                count += memory[i][j + 1];
+                max = Math.max(max, memory[i + 1][j + 1]);
+                if (s.charAt(j) == t.charAt(i)) {
+                    memory[i][j] = count + max;
+                }
+            }
+        }
+
+        int res = 0;
         for (int i = 0; i < s.length(); i++) {
-            longString.add(s.charAt(i));
+            res = Math.max(res, memory[0][i]);
         }
 
-        for (int i = 0; i < t.length(); i++) {
-            longString.add(t.charAt(i));
-        }
+        return res;
+    }
 
-        return numHelper(longString, target);
+    public static void main(String[] args) {
+        DistincSubsequences a = new DistincSubsequences();
+        a.numDistinct("babgbag", "bag");
     }
 }
