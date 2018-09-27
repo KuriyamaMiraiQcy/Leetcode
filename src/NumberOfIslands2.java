@@ -25,18 +25,24 @@ public class NumberOfIslands2 {
                 String neighbor = getPosition(direct);
 
                 if (island.keySet().contains(neighbor)) {
-                    while (!island.get(neighbor).equals(neighbor)) {
-                        neighbor = island.get(neighbor);
-                    }
-                    if (!neighbor.equals(island.get(p))) {
+                    neighbor = getRoot(neighbor, island);
+                    String r = getRoot(new String(p), island);
+                    if (!neighbor.equals(r)) {
                         count--;
-                        island.put(island.get(p), neighbor);
+                        island.put(r, neighbor);
                     }
                 }
             }
             list.add(count);
         }
         return list;
+    }
+
+    private String getRoot(String str, HashMap<String, String> is) {
+        while (!is.get(str).equals(str)) {
+            str = is.get(str);
+        }
+        return str;
     }
 
     private String getPosition(int[] pos) {
