@@ -46,7 +46,6 @@ public class FindKClosestElements {
             result.add(arr[i]);
         }
 
-
         return result;
     }
 
