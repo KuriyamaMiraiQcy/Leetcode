@@ -1,62 +1,62 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class WordLadder {
-    HashMap<String, Integer> visited;
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
         HashSet<String> set = new HashSet<>();
-        visited = new HashMap<>();
+        HashSet<String> visited = new HashSet<>();
+        ArrayDeque<String> queue = new ArrayDeque<>();
         for (String s:wordList) {
             set.add(s);
-            visited.put(s, -1);
         }
         if (!set.contains(endWord)) {
             return 0;
         }
 
-        return DFS(beginWord, endWord, set, 1);
-    }
+        queue.add(beginWord);
+        queue.add("");
+        int level = 1;
 
-    private int DFS(String beginWord, String endWord, HashSet<String> set, int length) {
-        if (set.size() == 0) {
-            return 0;
-        }
-        if (beginWord.equals(endWord)) {
-            return length;
-        }
-        length++;
-        set.remove(beginWord);
-        int min = Integer.MAX_VALUE;
-
-        for (String s:set) {
-            if (calculateDistance(beginWord, s) == 1) {
-                if (visited.get(s) != -1) {
-                    min = (visited.get(s) == 0)?min:visited.get(s);
-                } else {
-                    int res = DFS(s, endWord, (HashSet<String>) set.clone(), length);
-                    if (res != 0) {
-                        min = Math.min(min, res);
+        while (!queue.isEmpty()) {
+            String head = queue.pop();
+            if (!head.isEmpty()) {
+                char[] charArray = head.toCharArray();
+                for (int i = 0; i < charArray.length; i++) {
+                    char current = charArray[i];
+                    for (int j = 0; j < 26; j++) {
+                        if ('a' + j != current) {
+                            charArray[i] =(char)('a' + j);
+                            String change = new String(charArray);
+                            if (change.equals(endWord)) {
+                                return level + 1;
+                            }
+                            if (set.contains(change)) {
+                                visited.add(change);
+                                set.remove(change);
+                                queue.add(change);
+                            }
+                        }
                     }
-                    visited.put(s, res);
+                    charArray[i] = current;
                 }
+            } else {
+                if (!queue.isEmpty()) {
+                    queue.add("");
+                }
+                level++;
             }
         }
-        set.add(beginWord);
-
-        if (min == Integer.MAX_VALUE) {
-            return 0;
-        }
-        return min;
+        return 0;
     }
 
-    private int calculateDistance(String a, String b) {
-        int count = 0;
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) != b.charAt(i)) {
-                count++;
-            }
-        }
-        return count;
+    public static void main(String[] args) {
+        WordLadder a = new WordLadder();
+        LinkedList<String> list = new LinkedList<>();
+        list.add("hot");
+        list.add("dot");
+        list.add("dog");
+        list.add("lot");
+        list.add("log");
+        list.add("cog");
+        a.ladderLength("hit", "cog", list);
     }
 }
