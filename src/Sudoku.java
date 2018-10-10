@@ -3,41 +3,45 @@ import java.util.HashSet;
 
 public class Sudoku {
     public boolean isValidSudoku(char[][] board) {
-        HashMap<String, HashSet<Integer>> map = new HashMap<>();
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] != '.') {
-                    int num = Character.getNumericValue(board[i][j]);
-                    String row = "Row:" + Integer.toString(i);
-                    String col = "Col:" + Integer.toString(j);
-                    String block = "Block:" + Integer.toString(i / 3) + Integer.toString(j / 3);
+        for(int i = 0; i < 9; i++) {
+            char[] arr = board[i];
+            if(!isValidHelper(arr)) {
+                return false;
+            }
 
-                    if (!check(row, map, num)) {
-                        return false;
-                    }
-                    if (!check(col, map, num)) {
-                        return false;
-                    }
-                    if (!check(block, map, num)) {
-                        return false;
-                    }
+            char[] arr2 = new char[9];
+            for(int j = 0; j < 9; j++) {
+                arr2[j] = board[j][i];
+            }
+            if(!isValidHelper(arr2)) {
+                return false;
+            }
+
+            int x = i/3 * 3;
+            int y = i%3 * 3;
+            char[] arr3 = new char[9];
+            int j = 0;
+            for(int m = x; m < x + 3; m++) {
+                for(int n = y; n < y + 3; n++) {
+                    arr3[j++] = board[m][n];
                 }
             }
+            if(!isValidHelper(arr3)) {
+                return false;
+            }
         }
+
         return true;
     }
 
-    private boolean check(String str, HashMap<String, HashSet<Integer>> map, int n) {
-        if (map.containsKey(str)) {
-            if (map.get(str).contains(n)) {
+    public boolean isValidHelper(char[] arr) {
+        HashSet<Character> set = new HashSet<>();
+        for(int i = 0; i < arr.length; i++) {
+            if(set.contains(arr[i]) && arr[i] != '.') {
                 return false;
             }
-            map.get(str).add(n);
-        } else {
-            HashSet<Integer> set = new HashSet<>();
-            set.add(n);
-            map.put(str, set);
+            set.add(arr[i]);
         }
         return true;
     }
