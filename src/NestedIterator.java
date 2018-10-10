@@ -1,33 +1,33 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
-public class NestedIterator implements Iterator<Integer>{
-    ArrayList<Integer> list = new ArrayList<>();
-    Iterator<Integer> it;
-
+public class NestedIterator implements Iterator<Integer> {
+    Stack<NestedInteger> stack = new Stack<>();
     public NestedIterator(List<NestedInteger> nestedList) {
-        flatten(nestedList, list);
-        it = list.iterator();
-    }
-
-    private void flatten(List<NestedInteger> nestedList, ArrayList<Integer> list) {
-        for (NestedInteger iter:nestedList) {
-            if (iter.isInteger()) {
-                list.add(iter.getInteger());
-            } else {
-                flatten(iter.getList(), list);
-            }
+        for(int i = nestedList.size() - 1; i >= 0; i--) {
+            stack.push(nestedList.get(i));
         }
     }
 
     @Override
     public Integer next() {
-        return it.next();
+        return stack.pop().getInteger();
     }
 
     @Override
     public boolean hasNext() {
-        return it.hasNext();
+        while(!stack.isEmpty()) {
+            NestedInteger curr = stack.peek();
+            if(curr.isInteger()) {
+                return true;
+            }
+            stack.pop();
+            for(int i = curr.getList().size() - 1; i >= 0; i--) {
+                stack.push(curr.getList().get(i));
+            }
+        }
+        return false;
     }
 }
