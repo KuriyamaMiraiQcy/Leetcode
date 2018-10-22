@@ -49,6 +49,33 @@ public class MinimumWindowSubstring {
         return start;
 
     }
+    //real sliding windows solution
+    public String MinWindow(String s, String t) {
+        if (s == null || t == null || s.length() < t.length()) return "";
+        int[] map = new int[128];
+        for (char c : t.toCharArray()) {
+            map[c]++;
+        }
+        int m = s.length(), n = t.length();
+        int minLen = m + 1, left = 0;
+        int lo = 0, cnt = 0;
+        for (int hi = 0; hi < m; hi++) {
+            char c = s.charAt(hi);
+            map[c]--;
+            if (map[c] >= 0) cnt++;
+            while (cnt == n) {
+                if (minLen > hi - lo + 1) {
+                    minLen = hi - lo + 1;
+                    left = lo;
+                }
+                char pre = s.charAt(lo);
+                map[pre]++;
+                if (map[pre] > 0) cnt--;
+                lo++;
+            }
+        }
+        return minLen == m + 1 ? "" : s.substring(left, left + minLen);
+    }
 
     public static void main(String[] args) {
         MinimumWindowSubstring a = new MinimumWindowSubstring();
