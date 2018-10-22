@@ -1,74 +1,35 @@
+package Uber;
 public class RegularExpression {
     public boolean isMatch(String s, String p) {
-        if (p.length() == 0) {
+
+        if (s == null || p == null) {
             return false;
         }
-        int match = -1;
-        int i = 0;
-        for (; i < p.length() - 1; i++) {
-            if (match == s.length() - 1) {
-                break;
+        boolean[][] dp = new boolean[s.length()+1][p.length()+1];
+        dp[0][0] = true;
+        for (int i = 0; i < p.length(); i++) {
+            if (p.charAt(i) == '*' && dp[0][i-1]) {
+                dp[0][i+1] = true;
             }
-            if (p.charAt(i + 1) != '*') {
-                if (p.charAt(i) == '.') {
-                    match++;
-                } else {
-                    if (p.charAt(i) != s.charAt(match + 1)) {
-                        return false;
-                    } else {
-                        match++;
-                    }
+        }
+        for (int i = 0 ; i < s.length(); i++) {
+            for (int j = 0; j < p.length(); j++) {
+                if (p.charAt(j) == '.') {
+                    dp[i+1][j+1] = dp[i][j];
                 }
-            } else {
-                if (p.charAt(i) == '.') {
-                    if (i + 1 != p.length() - 1) {
-                        char endChar = p.charAt(i + 2);
-                        int j = match + 1;
-                        for (; j < s.length(); j++) {
-                            if (s.charAt(j) == endChar) {
-                                break;
-                            }
-                        }
-                        match = j - 1;
-                        i = i + 1;
+                if (p.charAt(j) == s.charAt(i)) {
+                    dp[i+1][j+1] = dp[i][j];
+                }
+                if (p.charAt(j) == '*') {
+                    if (p.charAt(j-1) != s.charAt(i) && p.charAt(j-1) != '.') {
+                        dp[i+1][j+1] = dp[i+1][j-1];
                     } else {
-                        return true;
+                        dp[i+1][j+1] = (dp[i+1][j] || dp[i][j+1] || dp[i+1][j-1]);
                     }
-                } else {
-                    int j = match + 1;
-                    for (; j < s.length(); j++) {
-                        if (s.charAt(j) != p.charAt(i)) {
-                            break;
-                        }
-                    }
-                    match = j - 1;
-                    i++;
                 }
             }
         }
-        if (i < p.length() - 1) {
-            return false;
-        }
-        if (match == s.length() - 1 && i > p.length() - 1) {
-            return true;
-        }
-        if (match < s.length() - 1 && i > p.length() - 1) {
-            return false;
-        }
-        if (match < s.length() - 2) {
-            return false;
-        }
-        if (p.charAt(i) != '*') {
-            if (match == s.length() - 1) {
-                return false;
-            }
-            if (p.charAt(i) == '.') {
-                return true;
-            } else {
-                return p.charAt(i) == s.charAt(match + 1);
-            }
-        }
-        return match == s.length() - 1;
+        return dp[s.length()][p.length()];
     }
 
     public static void main(String[] args) {
