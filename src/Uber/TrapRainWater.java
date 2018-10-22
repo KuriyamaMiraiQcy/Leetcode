@@ -1,5 +1,5 @@
 public class TrapRainWater {
-    //A liitle redundant
+    //A little redundant
     public int trap(int[] height) {
         if (height.length == 0) {
             return 0;
