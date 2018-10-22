@@ -1,3 +1,4 @@
+package Uber;
 public class TrapRainWater {
     //A little redundant
     public int trap(int[] height) {
