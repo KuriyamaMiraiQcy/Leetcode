@@ -1,20 +1,11 @@
 public class CoinChange2 {
     public int change(int amount, int[] coins) {
         int[] dp = new int[amount + 1];
-        dp[0] = 0;
-        for (int num:coins) {
-            if (num <= amount) {
-                dp[num] = 1;
+        dp[0] = 1;
+        for (int coin : coins) {
+            for (int i = coin; i <= amount; i++) {
+                dp[i] += dp[i-coin];
             }
-        }
-        for (int i = 1; i < dp.length; i++) {
-            int count = 0;
-            for (int num:coins) {
-                if (i - num >= 0) {
-                    count += dp[i - num];
-                }
-            }
-            dp[i] += count;
         }
         return dp[amount];
     }
