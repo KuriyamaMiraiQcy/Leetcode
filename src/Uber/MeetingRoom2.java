@@ -19,7 +19,7 @@ public class MeetingRoom2 {
         for (int i = 0; i < intervals.length; i++) {
             if (start[i] >= end[prev]) {
                 count = Math.max(count, i - prev);
-                prev = i;
+                prev += 1;
             }
             if (i == intervals.length - 1) {
                 count = Math.max(count, intervals.length - prev);
