@@ -1,24 +1,21 @@
+import java.util.Stack;
+
 public class LongestValidParentheses {
     public int longestValidParentheses(String s) {
-        int open = 0;
-        int count = 0;
-        int max = 0;
-
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '(') {
-                open++;
-            }
-            if (s.charAt(i) == ')') {
-                if (open > 0) {
-                    open--;
-                    count++;
-                    if (open == 0) {
-                        max = Math.max(max, count * 2);
-                        count = 0;
-                    }
+        Stack<Integer> stack = new Stack<Integer>();
+        int max=0;
+        int left = -1;
+        for(int j=0;j<s.length();j++){
+            if(s.charAt(j)=='(') stack.push(j);
+            else {
+                if (stack.isEmpty()) left=j;
+                else{
+                    stack.pop();
+                    if(stack.isEmpty()) max=Math.max(max,j-left);
+                    else max=Math.max(max,j-stack.peek());
                 }
             }
         }
-        return Math.max(max, count * 2);
+        return max;
     }
 }
