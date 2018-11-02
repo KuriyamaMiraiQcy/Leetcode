@@ -1,9 +1,10 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class WordDistance {
+public class ShortestWordDistanceII {
     HashMap<String, ArrayList<Integer>> map = new HashMap<>();
 
-    public WordDistance(String[] words) {
+    public ShortestWordDistanceII(String[] words) {
         for (int i = 0; i < words.length; i++) {
             if (!map.containsKey(words[i])) {
                 ArrayList<Integer> lst = new ArrayList<>();
@@ -31,10 +32,5 @@ public class WordDistance {
             }
         }
         return min;
-    }
-
-    public static void main(String[] args) {
-        WordDistance a = new WordDistance(new String[]{"a", "b", "c", "d", "d"});
-        a.shortest("a", "d");
     }
 }
