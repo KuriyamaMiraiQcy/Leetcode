@@ -1,3 +1,4 @@
+package Uber;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class PalindromePairs {
         }
         return true;
     }
+
     //faster solution
     public List<List<Integer>> PalindromePairs(String[] words) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();

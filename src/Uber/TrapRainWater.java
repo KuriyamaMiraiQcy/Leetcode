@@ -67,4 +67,39 @@ public class TrapRainWater {
         }
         return max;
     }
+
+    public static int trapMaxWater(int[] nums){
+        if(nums==null || nums.length<2) return 0;
+        int l = 0;
+        int r = nums.length - 1;
+        int max = 0;
+        while(l<r){
+            //find initial left and right boundary
+            while(l<r && nums[l]<=nums[l+1]){
+                l++;
+            }
+            while(r>l && nums[r]<=nums[r-1]){
+                r--;
+            }
+            //loop through container by container
+            //one side at a time, because the last one would between l and r, choose the smaller one each time
+
+            int cur = 0;
+            if(nums[l]<=nums[r]){
+                int h = nums[l];
+                while(l<r && nums[l]<=h){
+                    cur += h-nums[l];
+                    l++;
+                }
+            } else {
+                int h = nums[r];
+                while(r>l && nums[r]<=h){
+                    cur += h-nums[r];
+                    r--;
+                }
+            }
+            max = Math.max(max, cur);
+        }
+        return max;
+    }
 }

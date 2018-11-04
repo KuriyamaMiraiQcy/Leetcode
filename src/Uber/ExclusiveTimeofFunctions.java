@@ -26,7 +26,7 @@ public class ExclusiveTimeofFunctions {
                 if (Integer.parseInt(removed[0]) == id) {
                     res[id] += Integer.parseInt(removed[2]) - running + 1;
                 } else {
-                    res[Integer.parseInt(removed[0])] = Integer.parseInt(removed[2]) - running + 1;
+                    res[Integer.parseInt(removed[0])] += Integer.parseInt(removed[2]) - running + 1;
                 }
                 if (pending.size() != 0) {
                     id = pending.pop();

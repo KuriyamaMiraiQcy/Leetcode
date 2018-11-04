@@ -1,3 +1,5 @@
+package Uber;
+
 public class SolvetheEquation {
     public String solveEquation(String equation) {
         String[] separateByEqual = equation.split("=");

@@ -1,3 +1,4 @@
+package Uber;
 public class Minesweeper {
     int[][] directions = new int[][]{{1,1},{1,0},{1,-1},{0,1},{0,-1},{-1,-1},{-1,0},{-1,1}};
     public char[][] updateBoard(char[][] board, int[] click) {

@@ -1,3 +1,5 @@
+package Uber;
+
 public class GameofLife {
     //in-place solution
     //when board is infinite

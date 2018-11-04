@@ -41,6 +41,33 @@ public class LongestSubstringwithAtMostTwoDistinctCharacters {
         return max;
     }
 
+    // sliding windows solution
+    public int LengthOfLongestSubstringTwoDistinct(String s) {
+        if (s.isEmpty()) return 0;
+        int max = 1;
+        int p1 = 0, p2 = 0;//p1:last index of first char  p2:last index of second char
+        int last = 1;
+        char[] chars = s.toCharArray();
+        for (int i = 1; i < chars.length; i++) {
+            if (p1 != p2 && chars[i] != chars[p1] && chars[i] != chars[p2]) {
+                if (last > max) max = last;
+
+                last = i - p1;
+                p1 = p2;
+                p2 = i;
+            } else {
+                if (chars[i] == chars[p1]) {
+                    p1 = p1 == p2 ? i : p2;
+                }
+                last++;
+                p2 = i;
+            }
+        }
+
+        if (last > max) max = last;
+        return max;
+    }
+
     public static void main(String[] args) {
         LongestSubstringwithAtMostTwoDistinctCharacters a = new LongestSubstringwithAtMostTwoDistinctCharacters();
         a.lengthOfLongestSubstringTwoDistinct("ccaabbb");

@@ -1,28 +1,43 @@
+package Uber;
 public class RecoverBST {
+    TreeNode firstElement = null;
+    TreeNode secondElement = null;
+    // The reason for this initialization is to avoid null pointer exception in the first comparison when prevElement has not been initialized
+    TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
+
+
     public void recoverTree(TreeNode root) {
-        recover(root, new TreeNode(Integer.MIN_VALUE), new TreeNode(Integer.MAX_VALUE));
+
+        // In order traversal to find the two elements cuz in order traversal for BST in ascending order.
+        traverse(root);
+
+        // Swap the values of the two nodes
+        int temp = firstElement.val;
+        firstElement.val = secondElement.val;
+        secondElement.val = temp;
     }
 
-    private TreeNode recover(TreeNode root, TreeNode min, TreeNode max) {
-        if (root == null) {
-            return null;
+    private void traverse(TreeNode root) {
+
+        if (root == null)
+            return;
+
+        traverse(root.left);
+
+        // Start of "do some business",
+        // If first element has not been found, assign it to prevElement (refer to 6 in the example above)
+        if (firstElement == null && prevElement.val >= root.val) {
+            firstElement = prevElement;
         }
-        if (root.val < min.val || root.val > max.val){
-            return root;
-        } else {
-            TreeNode left = recover(root.left, min, root);
-            TreeNode right = recover(root.right, root, max);
-            if (left != null && right != null) {
-                int temp = left.val;
-                left.val = right.val;
-                right.val = temp;
-                return null;
-            } else if (left != null) {
-                return left;
-            } else if (right != null) {
-                return right;
-            }
+
+        // If first element is found, assign the second element to the root (refer to 2 in the example above)
+        if (firstElement != null && prevElement.val >= root.val) {
+            secondElement = root;
         }
-        return null;
+        prevElement = root;
+
+        // End of "do some business"
+
+        traverse(root.right);
     }
 }
