@@ -15,7 +15,7 @@ public class combinationSum {
 
     void DFS(int[] candidates, int index, int target, LinkedList<Integer> formerResult, List<List<Integer>> res) {
         if (target == 0) {
-            res.add((LinkedList<Integer>)formerResult.clone());
+            res.add(new LinkedList<>(formerResult));
             return;
         }
         for (int i = index; i < candidates.length; i++) {
