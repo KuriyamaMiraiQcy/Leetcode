@@ -1,4 +1,6 @@
-public class Calculator {
+package Uber;
+
+public class BasicCalculator {
     public int calculate(String s) {
         s = s.replaceAll(" ", "");
         int sum = 0;
