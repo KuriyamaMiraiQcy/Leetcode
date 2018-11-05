@@ -1,63 +1,46 @@
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Queue;
-import java.util.Stack;
+package Uber;
+import java.util.*;
 
 public class SerializeBST {
 
-    // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        ArrayDeque<TreeNode> queue = new ArrayDeque<>();
+        if (root == null) return "";
+        Queue<TreeNode> q = new LinkedList<>();
+        StringBuilder res = new StringBuilder();
+        q.add(root);
+        while (!q.isEmpty()) {
+            TreeNode node = q.poll();
+            if (node == null) {
+                res.append("n ");
+                continue;
+            }
+            res.append(node.val + " ");
+            q.add(node.left);
+            q.add(node.right);
+        }
+        return res.toString();
+    }
 
-        String res = new String();
-
-        queue.add(root);
-
-        while (queue.size() != 0) {
-            TreeNode parent = queue.poll();
-
-            if (parent == null) {
-                res += "null,";
-            } else {
-                res += Integer.toString(parent.val) + ",";
-                queue.add(parent.left);
-                queue.add(parent.right);
+    public TreeNode deserialize(String data) {
+        if (data == "") return null;
+        Queue<TreeNode> q = new LinkedList<>();
+        String[] values = data.split(" ");
+        TreeNode root = new TreeNode(Integer.parseInt(values[0]));
+        q.add(root);
+        for (int i = 1; i < values.length; i++) {
+            TreeNode parent = q.poll();
+            if (!values[i].equals("n")) {
+                TreeNode left = new TreeNode(Integer.parseInt(values[i]));
+                parent.left = left;
+                q.add(left);
+            }
+            if (!values[++i].equals("n")) {
+                TreeNode right = new TreeNode(Integer.parseInt(values[i]));
+                parent.right = right;
+                q.add(right);
             }
         }
-
-        res = res.substring(0, res.length() - 1);
-        res = "[" +res + "]";
-        return res;
-    }
-
-    // Decodes your encoded data to tree.
-    public TreeNode deserialize(String data) {
-        data = data.substring(1, data.length() - 1);
-        String[] allElements = data.split(",");
-        return recoverTree(allElements, 0);
-    }
-
-    private int depth(TreeNode node) {
-        if (node == null) {
-            return 0;
-        }
-        return Math.max(depth(node.left), depth(node.right)) + 1;
-    }
-
-    private TreeNode recoverTree(String[] elements, int index) {
-        if (index > elements.length - 1) {
-            return null;
-        }
-        String s = elements[index];
-        if (s.equals("null")) {
-            return null;
-        }
-
-        TreeNode node = new TreeNode(Integer.parseInt(s));
-
-        node.left = recoverTree(elements, index * 2 + 1);
-        node.right = recoverTree(elements, index * 2 + 2);
-        return node;
+        return root;
     }
 
     public static void main(String[] args) {

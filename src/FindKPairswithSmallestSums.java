@@ -4,38 +4,36 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class FindKPairswithSmallestSums {
-    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        List<int[]> res = new ArrayList<>();
-        if (nums1.length == 0 || nums2.length == 0) {
-            return res;
-        }
 
-        boolean combination = k > nums1.length * nums2.length;
-
-        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>() {
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                return o1[0] + o1[1] - o2[0] - o2[1];
-            }
-        });
-
-        for (int i = 0; i < nums1.length; i++) {
-            for (int j = 0; j < nums2.length; j++) {
-                if (combination) {
-                    res.add(new int[]{nums1[i], nums2[j]});
-                } else {
-                    pq.offer(new int[]{nums1[i], nums2[j]});
-                }
-            }
-        }
-
-        if (!combination) {
-            for (int i = 0; i < k; i++) {
-                if (!pq.isEmpty()) {
-                    res.add(pq.poll());
-                }
-            }
+    public static List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<Tuple> pq = new PriorityQueue<Tuple>();
+        int m = nums1.length, n = nums2.length;
+        List<int[]> res = new ArrayList<int[]>();
+        if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0 || k <= 0) return res;
+        for (int j = 0; j <= n - 1; j++) pq.offer(new Tuple(0, j, nums1[0] + nums2[j]));
+        for (int i = 0; i < Math.min(k, m * n); i++) {
+            Tuple t = pq.poll();
+            res.add(new int[]{nums1[t.x], nums2[t.y]});
+            if (t.x == m - 1) continue;
+            pq.offer(new Tuple(t.x + 1, t.y, nums1[t.x + 1] + nums2[t.y]));
         }
         return res;
+    }
+
+
+
+}
+class Tuple implements Comparable<Tuple> {
+    int x, y, val;
+
+    public Tuple(int x, int y, int val) {
+        this.x = x;
+        this.y = y;
+        this.val = val;
+    }
+
+    @Override
+    public int compareTo(Tuple that) {
+        return this.val - that.val;
     }
 }

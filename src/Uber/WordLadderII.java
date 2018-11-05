@@ -3,74 +3,85 @@ package Uber;
 import java.util.*;
 
 public class WordLadderII {
-    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        ArrayList<List<String>> res = new ArrayList<>();
-        if (!wordList.contains(endWord)) {
-            return res;
-        }
-        wordList.remove(endWord);
-        LinkedList[] distanceToEnd = new LinkedList[wordList.size() + 1];
-        for (int i = 0; i < distanceToEnd.length; i++) {
-            LinkedList<Integer> list = new LinkedList();
-            String compare;
-            if (i == distanceToEnd.length - 1) {
-                compare = beginWord;
-            } else {
-                compare = wordList.get(i);
-            }
-            for (int j = 0; j < wordList.size(); j++) {
-                if (calculateDistance(wordList.get(j), endWord) <= calculateDistance(compare, endWord) && calculateDistance(compare, wordList.get(j)) == 1) {
-                    list.add(j);
-                }
-            }
-            distanceToEnd[i] = list;
-        }
-        ArrayDeque<String> queue = new ArrayDeque<>();
-        ArrayDeque<LinkedList<String>> result = new ArrayDeque<>();
-        ArrayDeque<Integer> level = new ArrayDeque<>();
-        queue.add(beginWord);
-        level.add(1);
-        LinkedList<String> start = new LinkedList<>();
-        start.add(beginWord);
-        result.add(start);
+    public List<List<String>> findLadders(String start, String end, List<String> wordList) {
+        HashSet<String> dict = new HashSet<String>(wordList);
+        List<List<String>> res = new ArrayList<List<String>>();
+        HashMap<String, ArrayList<String>> nodeNeighbors = new HashMap<String, ArrayList<String>>();// Neighbors for every node
+        HashMap<String, Integer> distance = new HashMap<String, Integer>();// Distance of every node from the start node
+        ArrayList<String> solution = new ArrayList<String>();
 
-        while (queue.size() != 0) {
-            String word = queue.poll();
-            int depth = level.poll();
-            LinkedList<String> resultTemp = result.poll();
+        dict.add(start);
+        bfs(start, end, dict, nodeNeighbors, distance);
+        dfs(start, end, dict, nodeNeighbors, distance, solution, res);
+        return res;
+    }
 
-            if (word.equals(endWord)) {
-                res.add(resultTemp);
-                while (level.peek() == depth) {
-                    word = queue.poll();
-                    level.poll();
-                    resultTemp = result.poll();
-                    if (word.equals(endWord)) {
-                        res.add(resultTemp);
+    // BFS: Trace every node's distance from the start node (level by level).
+    private void bfs(String start, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance) {
+        for (String str : dict)
+            nodeNeighbors.put(str, new ArrayList<String>());
+
+        Queue<String> queue = new LinkedList<String>();
+        queue.offer(start);
+        distance.put(start, 0);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            boolean foundEnd = false;
+            for (int i = 0; i < count; i++) {
+                String cur = queue.poll();
+                int curDistance = distance.get(cur);
+                ArrayList<String> neighbors = getNeighbors(cur, dict);
+
+                for (String neighbor : neighbors) {
+                    nodeNeighbors.get(cur).add(neighbor);
+                    if (!distance.containsKey(neighbor)) {// Check if visited
+                        distance.put(neighbor, curDistance + 1);
+                        if (end.equals(neighbor))// Found the shortest path
+                            foundEnd = true;
+                        else
+                            queue.offer(neighbor);
                     }
                 }
+            }
+
+            if (foundEnd)
                 break;
+        }
+    }
+
+    // Find all next level nodes.
+    private ArrayList<String> getNeighbors(String node, Set<String> dict) {
+        ArrayList<String> res = new ArrayList<String>();
+        char chs[] = node.toCharArray();
+
+        for (char ch ='a'; ch <= 'z'; ch++) {
+            for (int i = 0; i < chs.length; i++) {
+                if (chs[i] == ch) continue;
+                char old_ch = chs[i];
+                chs[i] = ch;
+                if (dict.contains(String.valueOf(chs))) {
+                    res.add(String.valueOf(chs));
+                }
+                chs[i] = old_ch;
             }
-            int index = (word.equals(beginWord))?distanceToEnd.length - 1:wordList.indexOf(word);
-            LinkedList<Integer> l = distanceToEnd[index];
-            for (Integer n:l) {
-                queue.push(wordList.get(n));
-                level.push(depth + 1);
-                LinkedList<String> clone = (LinkedList<String>) resultTemp.clone();
-                clone.add(wordList.get(n));
-                result.add(clone);
-            }
+
         }
         return res;
     }
 
-    private int calculateDistance(String a, String b) {
-        int count = 0;
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) != b.charAt(i)) {
-                count++;
+    // DFS: output all paths with the shortest distance.
+    private void dfs(String cur, String end, Set<String> dict, HashMap<String, ArrayList<String>> nodeNeighbors, HashMap<String, Integer> distance, ArrayList<String> solution, List<List<String>> res) {
+        solution.add(cur);
+        if (end.equals(cur)) {
+            res.add(new ArrayList<String>(solution));
+        } else {
+            for (String next : nodeNeighbors.get(cur)) {
+                if (distance.get(next) == distance.get(cur) + 1) {
+                    dfs(next, end, dict, nodeNeighbors, distance, solution, res);
+                }
             }
         }
-        return count;
+        solution.remove(solution.size() - 1);
     }
 }
