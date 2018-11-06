@@ -34,4 +34,50 @@ public class DeleteNodeinaBST {
         }
         return root.val;
     }
+
+    //iterative solution
+    private TreeNode deleteRootNode(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        if (root.left == null) {
+            return root.right;
+        }
+        if (root.right == null) {
+            return root.left;
+        }
+        TreeNode next = root.right;
+        TreeNode pre = null;
+        for(; next.left != null; next = next.left) {
+            pre = next;
+        }
+        next.left = root.left;
+        if(root.right != next) {
+            pre.left = next.right;
+            next.right = root.right;
+        }
+        return next;
+    }
+
+    public TreeNode DeleteNode(TreeNode root, int key) {
+        TreeNode cur = root;
+        TreeNode pre = null;
+        while(cur != null && cur.val != key) {
+            pre = cur;
+            if (key < cur.val) {
+                cur = cur.left;
+            } else if (key > cur.val) {
+                cur = cur.right;
+            }
+        }
+        if (pre == null) {
+            return deleteRootNode(cur);
+        }
+        if (pre.left == cur) {
+            pre.left = deleteRootNode(cur);
+        } else {
+            pre.right = deleteRootNode(cur);
+        }
+        return root;
+    }
 }
