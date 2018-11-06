@@ -15,15 +15,9 @@ public class GenerateParentheses {
             res.add(cur);
             return;
         }
-        if (openUsed == closeUsed) {
-            cur += "(";
-            generate(res, openUsed + 1, closeUsed, n, cur);
-        } else if (openUsed == n) {
-            cur += ")";
-            generate(res, openUsed,closeUsed + 1, n, cur);
-        } else {
-            generate(res, openUsed + 1, closeUsed, n, new String(cur) + "(");
-            generate(res, openUsed, closeUsed + 1, n, new String(cur) + ")");
-        }
+        if(openUsed < n)
+            generate(res, openUsed+1, closeUsed, n, cur+"(");
+        if(closeUsed < openUsed)
+            generate(res, openUsed, closeUsed+1, n, cur+")");
     }
 }
