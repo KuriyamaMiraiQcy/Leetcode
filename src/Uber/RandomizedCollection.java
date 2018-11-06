@@ -1,13 +1,10 @@
 package Uber;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class RandomizedCollection {
     ArrayList<Integer> nums;
     HashMap<Integer, Set<Integer>> locs;
-    java.util.Random rand = new java.util.Random();
+    Random rand = new java.util.Random();
     /** Initialize your data structure here. */
     public RandomizedCollection() {
         nums = new ArrayList<Integer>();
