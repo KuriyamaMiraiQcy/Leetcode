@@ -23,14 +23,14 @@ public class Solution {
             transactionList.add(set);
         }
 
-        HashMap<HashSet<String>, Integer> supportCountMap = new HashMap<>();
-        ArrayList<HashSet<String>> frequentList = findFrequentItemList(transactionList, supportCountMap, minSupport);
+        HashMap<HashSet<String>, Integer> countMap = new HashMap<>();
+        ArrayList<HashSet<String>> oneList = findOne(transactionList, countMap, minSupport);
 
         HashMap<Integer, ArrayList<HashSet<String>>> map = new HashMap<>();
-        map.put(1, frequentList);
+        map.put(1, oneList);
         int k = 1;
 
-        do {
+        while (!map.get(k).isEmpty()) {
             k++;
             ArrayList<HashSet<String>> candidateList = generateCandidates(map.get(k - 1));
 
@@ -38,13 +38,13 @@ public class Solution {
                 ArrayList<HashSet<String>> candidate = subSet(transaction, candidateList);
 
                 for (HashSet<String> set:candidate) {
-                    supportCountMap.put(set, supportCountMap.getOrDefault(set, 0) + 1);
+                    countMap.put(set, countMap.getOrDefault(set, 0) + 1);
                 }
             }
 
-            ArrayList<HashSet<String>> next = getNextItemset(candidateList, supportCountMap, minSupport);
+            ArrayList<HashSet<String>> next = getNextItemset(candidateList, countMap, minSupport);
             map.put(k, next);
-        } while (!map.get(k).isEmpty());
+        }
 
 
         TreeMap<Integer, ArrayList<HashSet<String>>> itemSets = new TreeMap<>(Collections.reverseOrder());
@@ -54,7 +54,7 @@ public class Solution {
 
             for (int i = 0; i < itemsets.size(); i++) {
                 HashSet<String> set = itemsets.get(i);
-                int frequency = supportCountMap.get(set);
+                int frequency = countMap.get(set);
                 if (!itemSets.containsKey(frequency)) {
                     ArrayList<HashSet<String>> lst = new ArrayList<>();
                     lst.add(set);
@@ -154,12 +154,12 @@ public class Solution {
         printFrequentPatterns(newSets);
     }
 
-    private static ArrayList<HashSet<String>> getNextItemset(ArrayList<HashSet<String>> candidateList, HashMap<HashSet<String>, Integer> supportCountMap, int minSupport) {
+    private static ArrayList<HashSet<String>> getNextItemset(ArrayList<HashSet<String>> candidateList, HashMap<HashSet<String>, Integer> countMap, int minSupport) {
         ArrayList<HashSet<String>> res = new ArrayList<>();
 
         for (HashSet<String> candidate:candidateList) {
-            if (supportCountMap.containsKey(candidate)) {
-                if (supportCountMap.get(candidate) >= minSupport) {
+            if (countMap.containsKey(candidate)) {
+                if (countMap.get(candidate) >= minSupport) {
                     res.add(candidate);
                 }
             }
@@ -194,14 +194,14 @@ public class Solution {
         return res;
     }
 
-    private static ArrayList<HashSet<String>> findFrequentItemList(List<HashSet<String>> transactionList, HashMap<HashSet<String>, Integer> supportCountMap, int minSupport) {
+    private static ArrayList<HashSet<String>> findOne(List<HashSet<String>> transactionList, HashMap<HashSet<String>, Integer> countMap, int minSupport) {
         HashMap<String, Integer> map = new HashMap<>();
 
         for (HashSet<String> transaction:transactionList) {
             for (String s:transaction) {
                 HashSet<String> temp = new HashSet<>();
                 temp.add(s);
-                supportCountMap.put(temp, supportCountMap.getOrDefault(temp, 0) + 1);
+                countMap.put(temp, countMap.getOrDefault(temp, 0) + 1);
 
                 map.put(s, map.getOrDefault(s, 0) + 1);
             }
