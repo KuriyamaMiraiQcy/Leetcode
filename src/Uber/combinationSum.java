@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class combinationSum {
+public class CombinationSum {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
         List<List<Integer>> res = new ArrayList<>();
         Arrays.sort(candidates);
@@ -28,7 +28,7 @@ public class combinationSum {
     }
 
     public static void main(String[] args) {
-        combinationSum a = new combinationSum();
+        CombinationSum a = new CombinationSum();
         a.combinationSum(new int[]{2, 3, 6, 7}, 7);
     }
 }
