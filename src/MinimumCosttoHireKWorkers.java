@@ -1,48 +1,40 @@
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class MinimumCosttoHireKWorkers {
     public double mincostToHireWorkers(int[] quality, int[] wage, int K) {
-        double[] wagePerQuality = new double[quality.length];
-        HashMap<Double, Integer> map = new HashMap<>();
+        int numWorkers = quality.length;
 
-        for (int i = 0; i < quality.length; i++) {
-            wagePerQuality[i] = (double) wage[i] / (double)quality[i];
-            map.put(wagePerQuality[i], i);
+        /* qualityRatio[i] = {quality, wage[i] / quality[i]}. */
+        double[][] qualityRatio = new double[numWorkers][2];
+
+        for (int i = 0; i < numWorkers; i++) {
+            qualityRatio[i][0] = quality[i];
+            qualityRatio[i][1] = (double) wage[i] / quality[i];
         }
 
-        Arrays.sort(wagePerQuality);
+        Arrays.sort(qualityRatio, (a, b) -> Double.compare(a[1], b[1]));
+        double minSumSalary = Integer.MAX_VALUE;
+        int sumQuality = 0;;
 
-        double minimum = Double.MAX_VALUE;
+        /* Always remove maximum quality. */
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> Integer.compare(b, a));
 
-        for (int i = K - 1; i < wagePerQuality.length; i++) {
-            minimum = Math.min(minimum, getSumByChoosingK(map, wagePerQuality, quality, wage, i, K));
-        }
+        for (int i = 0; i < numWorkers; i++) {
+            maxHeap.add((int)qualityRatio[i][0]);
+            sumQuality += qualityRatio[i][0];
+            if (maxHeap.size() > K) {
+                int qualityPolled = maxHeap.poll();
+                sumQuality -= qualityPolled;
+            }
+            if (maxHeap.size() == K) {
 
-        return minimum;
-    }
-
-    public double getSumByChoosingK(HashMap<Double, Integer> map, double[] percentage, int[] quality, int[] wage, int K, int num) {
-        double maximumPercentage = percentage[K];
-
-        double sum = wage[map.get(percentage[K])];
-        int count = 0;
-
-        int[] temp = quality.clone();
-        Arrays.sort(temp);
-
-
-        for (int i = percentage.length - 1; i >= 0; i++) {
-            int index = map.get(percentage[i]);
-            if (quality[index] * maximumPercentage > wage[index]) {
-                count++;
-                sum += quality[index] * maximumPercentage;
-                if (count == num) {
-                    break;
-                }
+                /* Calculate sumSalary. */
+                double curRatio = qualityRatio[i][1];
+                minSumSalary = Math.min(minSumSalary, sumQuality * curRatio);
             }
         }
 
-        return sum;
+        return minSumSalary;
     }
 }
