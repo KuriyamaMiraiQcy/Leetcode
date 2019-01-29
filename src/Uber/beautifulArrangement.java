@@ -3,7 +3,7 @@ package Uber;
 public class BeautifulArrangement {
     public int countArrangement(int N) {
         boolean[] visited = new boolean[N];
-        return DFS(N, N, visited);sss
+        return DFS(N, N, visited);
     }
     // faster if go from back
     private int DFS(int cur, int N, boolean[] visited) {
