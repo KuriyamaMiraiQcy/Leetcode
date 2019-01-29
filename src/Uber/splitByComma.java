@@ -9,7 +9,7 @@ public class SplitByComma {
         List<String> res = new LinkedList<>();
         String curString = "";
         boolean isClosed = true;
-
+sss
         for (int i = 0; i < s.length(); i++) {
             if (!isClosed) {
                 if (s.charAt(i) == '"') {
