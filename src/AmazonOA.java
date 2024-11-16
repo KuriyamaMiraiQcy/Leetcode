@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.*;
 
 public class AmazonOA {
     int maxMoney(int[][] bags, int k) {
@@ -38,9 +38,151 @@ public class AmazonOA {
         return sum;
     }
 
+    List<List<Integer>> buyBooks(int[] books) {
+        List<List<Integer>> result = new ArrayList<>();
+        int start = 0;
+
+        for (int i = 0; i < books.length; i++) {
+            books[Math.abs(books[i]) - 1] = -books[Math.abs(books[i]) - 1];
+            List<Integer> list = new ArrayList<>();
+            while (start < books.length && books[start] < 0) {
+                list.add(++start);
+            }
+            result.add(list);
+        }
+        return result;
+    }
+
+    public int maximumQualitySum(int[] packets, int channels) {
+        // write your code here
+        Arrays.sort(packets);
+        int sum = 0;
+        for (int i = 0; i < channels - 1; i++) {
+            sum += packets[packets.length - 1 - i];
+        }
+        int median = (packets.length - channels) / 2;
+        if ((packets.length - channels + 1) % 2 == 1) {
+            return sum + packets[median];
+        }
+        return sum + (packets[median] + packets[median + 1] + 1) / 2;
+    }
+
+    String nextCode(String code, int k) {
+        List<String> nums = new ArrayList<>();
+        for (int i = 0; i < code.length(); i +=k) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = i; j < i + k; j++) {
+                if (j >= code.length()) {
+                    sb.append(0);
+                } else {
+                    sb.append(code.charAt(j));
+                }
+            }
+            if (!(!nums.isEmpty() && nums.getLast().equals(sb.toString()))) {
+                nums.add(sb.toString());
+            }
+        }
+        int num = 0;
+        if (nums.size() == 1) {
+            num = Integer.parseInt(nums.getFirst()) + 1;
+        } else {
+            boolean large = false;
+            for (int i = 1; i < nums.size(); i++) {
+                if (nums.get(i).compareTo(nums.getFirst()) > 0) {
+                    large = true;
+                }
+            }
+            if (large) {
+                num = Integer.parseInt(nums.getLast()) + 1;
+            } else {
+                num = Integer.parseInt(nums.getFirst());
+            }
+        }
+        return num == Math.pow(10, k) ? generateNext(Integer.toString(num / 10), code.length() + 1) :generateNext(Integer.toString(num), code.length());
+    }
+
+    private String generateNext(String i, int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < length; j++) {
+            sb.append(i.charAt(j % i.length()));
+        }
+        return sb.toString();
+    }
+
+    public int parcelEfficiency(int[] parcels) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        int start = 0, end = parcels.length - 1;
+
+        while (start <= end) {
+            pq.add(parcels[start]);
+            if (start != end) {
+                pq.add(parcels[end]);
+                pq.poll();
+            }
+            start++;
+            end--;
+        }
+        int result = 0;
+        while (!pq.isEmpty()) {
+            result += pq.poll();
+        }
+        return result;
+    }
+
+    public int getMinimumCost(int[] a, int[] b, int m) {
+        // write your code here
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a2 -> a2[0]));
+        for (int i = 0; i < a.length; i++) {
+            pq.add(new int[]{a[i], b[i]});
+        }
+
+        int result = 0;
+        for (int i = 0; i < m; i++) {
+            int[] temp = pq.poll();
+            result += temp[0];
+            pq.offer(new int[]{temp[0] + temp[1], temp[1]});
+        }
+        return result;
+    }
+
+    public int getMaxRacers(int[] speed, int k) {
+        // write your code here
+
+            int n=speed.length;
+            int[] array = new int[n];
+            int idx=0;
+            for(int a:speed){
+                array[idx++]=a;
+            }
+
+            int[] freq = new int[n+1];
+            int i=0;
+            int maxFreq=0;
+            int max=0;
+            for(int j=0;j<n;j++){
+                freq[array[j]]++;
+                maxFreq=Math.max(maxFreq, freq[array[j]]);
+                while(j-i+1-maxFreq>k){
+                    freq[array[i]]--;
+                    i++;
+                }
+                //max=Math.max(max,maxFreq);
+            }
+            return maxFreq;
+
+    }
+
     public static void main(String[] args) {
         AmazonOA a = new AmazonOA();
         System.out.println(a.maxMoney(new int[][]{{1,4,2}, {6,6,5}, {7,7,7},{9,10,1}}, 5));
         System.out.println(a.caloriesBurn(new int[]{5,2,5}));
+        for (List<Integer> l:a.buyBooks(new int[]{3,1,2,4})) {
+            for (Integer i:l) {
+                System.out.print(i);
+            }
+            System.out.println();
+        }
+        System.out.println(a.nextCode("10890", 2));
+        System.out.println(a.parcelEfficiency(new int[]{2,1,8,5,6,2,4}));
     }
 }
