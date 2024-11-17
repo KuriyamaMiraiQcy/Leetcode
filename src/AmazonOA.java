@@ -172,6 +172,36 @@ public class AmazonOA {
 
     }
 
+    public int parcelNum(int[] parcels) {
+        TreeMap<Integer,Integer> map = new TreeMap<>();
+        for (int parcel: parcels) {
+            map.put(parcel, map.getOrDefault(parcel, 0) + 1);
+        }
+        HashMap<Integer,Integer> map2 = new HashMap<>();
+        int start = map.firstKey();
+        while (start != map.lastKey()) {
+            int next = map.higherKey(start);
+            while (next != map.lastKey()) {
+                map2.put(next + start, map2.getOrDefault(next + start, 0) + map.get(start) * map.get(next));
+                next = map.higherKey(next);
+            }
+            map2.put(next + start, map2.getOrDefault(next + start, 0) + map.get(start) * map.get(next));
+            start = map.higherKey(start);
+        }
+        for (int key: map2.keySet()) {
+            if (map.containsKey(key)) {
+                map.put(key, map.get(key) + map2.get(key));
+            } else {
+                map.put(key, map2.get(key));
+            }
+        }
+        int result = 0;
+        for (int key: map.keySet()) {
+            result = Math.max(result, map.get(key));
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         AmazonOA a = new AmazonOA();
         System.out.println(a.maxMoney(new int[][]{{1,4,2}, {6,6,5}, {7,7,7},{9,10,1}}, 5));
