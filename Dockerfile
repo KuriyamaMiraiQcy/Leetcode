@@ -1,1 +1,1 @@
-From seafileltd/sdoc-server:latest
+From dyrnq/open-webui:main
